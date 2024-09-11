@@ -85,24 +85,39 @@ const products = [
     }
   ];
 
-function kartyarendereles() {
-  const kartyaContainer = document.querySelector(".products");
-  const kartyaTartalma = products.map(product => {
-    kartyaContainer.innerHTML += `
-      <div class="product-card" id="${product.id}">
-          <img src="./img/${product.picture}" alt="${product.name}">
-          <h3>${product.name}</h3>
-          <p>${product.description}</p>
-          <p>Ár: ${product.price} Ft</p>
-          <button class="add-to-cart-btn">Kosárba</button>
-      </div>
-    `
+  const makeBoxes = (data) =>{
+    const content = data.map( ({price,id,name,description,picture}) => 
+      `<div id="${id}" class="product-card">
+      <img src="img/${picture}">
+      <h3>${name}</h3>
+      <p>${description}</p>
+      <p>Ár: ${price} Ft</p>
+      </div>` );
+  
+    return content
+  }
+  
+  
+  const render = (data) => {
+    const boxes = document.querySelector(".products");
+    boxes.innerHTML = data.join("");
+  };
+  
+  const filter = () => {
+    const minPrice = parseFloat(document.querySelector("#min-price").value) ;
+    const maxPrice = parseFloat(document.querySelector("#max-price").value) ;
+    return products.filter(product => product.price >= minPrice && product.price <= maxPrice);
+  };
+  
+  const filterButtonManagement = () => {
+    const newProductsList = makeBoxes(filter());
+    render(newProductsList);
+  };
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    const productList = makeBoxes(products);
+    render(productList);
+  
+    const filterButton = document.querySelector("#filter-btn");
+    filterButton.addEventListener("click", filterButtonManagement);
   });
-  return kartyaTartalma;
-}
-
-
-// Renderelése a többi kártyáknak a megfelelő információkkal (Pisti)
-document.addEventListener("DOMContentLoaded", () => {
-  kartyarendereles()
-})
